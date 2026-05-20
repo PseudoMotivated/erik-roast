@@ -1,0 +1,82 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #050505;
+  color: #00ff41;
+  font-family: 'Courier New', Courier, monospace;
+  overflow-x: hidden;
+}
+
+.terminal {
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  border-bottom: 2px solid #00ff41;
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5rem;
+  animation: flicker 0.15s infinite;
+}
+
+.output {
+  flex-grow: 1;
+  white-space: pre-wrap;
+  line-height: 1.5;
+  margin-bottom: 2rem;
+}
+
+.input-area {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.prompt {
+  color: #ff003c;
+  font-weight: bold;
+}
+
+input {
+  background: transparent;
+  border: none;
+  color: #00ff41;
+  font-family: inherit;
+  font-size: 1.2rem;
+  outline: none;
+  flex-grow: 1;
+}
+
+.erik-face {
+  font-size: 0.8rem;
+  line-height: 1;
+  margin-bottom: 2rem;
+  color: #ff003c;
+}
+
+@keyframes flicker {
+  0% { opacity: 0.97; }
+  5% { opacity: 0.95; }
+  10% { opacity: 0.9; }
+  15% { opacity: 0.95; }
+  20% { opacity: 0.98; }
+  25% { opacity: 0.95; }
+  30% { opacity: 0.9; }
+  100% { opacity: 1; }
+}
+
+.typing {
+  border-right: .15em solid #00ff41;
+  animation: blink-caret .75s step-end infinite;
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: #00ff41; }
+}
