@@ -1,0 +1,32 @@
+name: Deploy Erik OS
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Execute deployment script
+        run: |
+          mkdir -p ~/scripts
+          cat << 'EOF' > ~/scripts/deploy.sh
+          #!/bin/bash
+          set -e
+          REPO_DIR="/home/ubuntu/erik-roast"
+          if [ ! -d "$REPO_DIR" ]; then
+            git clone https://github.com/PseudoMotivated/erik-roast.git "$REPO_DIR"
+          fi
+          cd "$REPO_DIR"
+          git fetch origin
+          git reset --hard origin/master
+          npm install
+          # Vite build produces 'dist' folder
+          # We'll just run 'npm run dev' via systemd for this demo as per setup-cicd.sh intention
+          # but a real deploy would serve 'dist'.
+          # Let's stick to the user's requested 'npm run dev' variant for now.
+          sudo systemctl restart erik-roast
+          EOF
+          chmod +x ~/scripts/deploy.sh
+          ~/scripts/deploy.sh
