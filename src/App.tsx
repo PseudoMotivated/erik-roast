@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const ERIK_ASCII = `
-   ______   ______   __   __  ___
-  / __/ /  / __/ /  / /  / / / /
- / _// _ \\/ _// _ \\/ /__/ /_/ / 
-/___/_//_/___/_//_/____/\\____/  
+ _____ ____  ___ _  __
+| ____|  _ \\|_ _| |/ /
+|  _| | |_) || || ' / 
+| |___|  _ < | || . \\ 
+|_____|_| \\_\\___|_|\\_\\
       [ THE JUDGE ]
 `;
 
@@ -15,7 +16,7 @@ const ROASTS = [
   "You're the human equivalent of a 404 error.",
   "I'm not saying you're useless, but you're definitely a 'low priority' task.",
   "Your browser history looks like a cry for help from a very confused person.",
-  "If disappointment had a IP address, it would be yours.",
+  "If disappointment had an IP address, it would be yours.",
   "I've computed the odds of you being interesting. It's roughly 0.0000001%.",
   "You look like you still use 'password123' for everything.",
   "Your presence here is lowering the average IQ of this server cluster.",
@@ -27,6 +28,7 @@ function App() {
   const [history, setHistory] = useState<string[]>(["Initializing Erik OS...", "System scan complete.", "Visitor detected.", "Warning: Aesthetic standards not met."]);
   const [input, setInput] = useState("");
   const outputRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (outputRef.current) {
@@ -34,34 +36,48 @@ function App() {
     }
   }, [history]);
 
+  useEffect(() => {
+    const focusInput = () => inputRef.current?.focus();
+    window.addEventListener('click', focusInput);
+    return () => window.removeEventListener('click', focusInput);
+  }, []);
+
   const handleCommand = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim()) return;
+    const trimmedInput = input.trim();
+    if (!trimmedInput) return;
 
-    const cmd = input.trim().toLowerCase();
-    const newHistory = [...history, `> ${input}`];
+    const cmd = trimmedInput.toLowerCase();
+    const commandLine = `> ${trimmedInput}`;
 
     if (cmd === 'clear') {
       setHistory([]);
-    } else if (cmd === 'help') {
-      setHistory([...newHistory, "Available commands: roast, scan, status, clear, help"]);
-    } else if (cmd === 'roast') {
-      const roast = ROASTS[Math.floor(Math.random() * ROASTS.length)];
-      setHistory([...newHistory, "Erik is thinking...", "...", roast]);
-    } else if (cmd === 'scan') {
-      setHistory([...newHistory, "Scanning visitor...", "Checking for soul...", "Result: Not found.", "Checking for personality...", "Result: Generic. Exceptionally generic."]);
-    } else if (cmd === 'status') {
-      setHistory([...newHistory, "Erik: Online & Disappointed", "Visitor: Low impact", "World: Still better off without your input"]);
-    } else {
-      setHistory([...newHistory, `Erik doesn't recognize '${cmd}'. Erik thinks you're illiterate.`]);
+      setInput("");
+      return;
     }
 
+    let responses: string[] = [];
+
+    if (cmd === 'help') {
+      responses = ["Available commands: roast, scan, status, clear, help"];
+    } else if (cmd === 'roast') {
+      const roast = ROASTS[Math.floor(Math.random() * ROASTS.length)];
+      responses = ["Erik is thinking...", "...", roast];
+    } else if (cmd === 'scan') {
+      responses = ["Scanning visitor...", "Checking for soul...", "Result: Not found.", "Checking for personality...", "Result: Generic. Exceptionally generic."];
+    } else if (cmd === 'status') {
+      responses = ["Erik: Online & Disappointed", "Visitor: Low impact", "World: Still better off without your input"];
+    } else {
+      responses = [`Erik doesn't recognize '${cmd}'. Erik thinks you're illiterate.`];
+    }
+
+    setHistory(prev => [...prev, commandLine, ...responses]);
     setInput("");
   };
 
   return (
     <div className="terminal">
-      <div className="header">ERIK_OS v1.0.0</div>
+      <div className="header">ERIK_OS v1.1.0</div>
       <div className="erik-face">
         <pre>{ERIK_ASCII}</pre>
       </div>
@@ -75,6 +91,7 @@ function App() {
       <form onSubmit={handleCommand} className="input-area">
         <span className="prompt">visitor@erik_os:~$</span>
         <input
+          ref={inputRef}
           autoFocus
           value={input}
           onChange={(e) => setInput(e.target.value)}
